@@ -475,13 +475,19 @@ TITLE = "<title>Calendrier NBA 2026-27 &middot; BasketUSA</title>\n"
 # Page servie dans l'iframe. La liste s'affiche en entier (pas de zone de
 # defilement interne) : c'est la page parente qui defile, ce qui evite le
 # double-scroll sur mobile. La hauteur est renvoyee au parent en postMessage.
+# Le widget garde sa zone de defilement interne : il reste compact dans
+# l'article. L'iframe, elle, ne defile pas (son contenu tient pile dedans),
+# donc pas de double-scroll.
+#
 # A placer APRES le fragment : le <style> du widget est dans le body, une regle
 # de meme specificite mise dans le <head> se ferait ecraser.
+#
+# Hauteur de liste en rem et non en vh : dans une iframe, vh se calcule sur la
+# hauteur de l'iframe, elle-meme pilotee par le contenu -> reference circulaire.
 IFRAME_CSS = """<style>
 html,body{margin:0;background:transparent;overflow:hidden;}
 .busa-nba{max-width:none;border:0;border-radius:0;}
-.busa-nba .bn-list{max-height:none;overflow-y:visible;}
-.busa-nba .bn-month{position:static;}
+.busa-nba .bn-list{max-height:26rem;}
 </style>
 """
 
@@ -506,11 +512,12 @@ IFRAME_JS = """<script>
 
 PAGES_URL = "https://jcrochet-netizen.github.io/schebasketusa/"
 PAGES_ORIGIN = "https://jcrochet-netizen.github.io"
-# Plancher mesure sur le rendu reel (pire cas : mobile, 80 matchs = 3220 px).
-# Il evite le CLS avant le premier postMessage, et surtout garantit que rien
-# n'est tronque si WordPress filtre le script parent. Le script le remet a 0
-# des qu'il connait la hauteur exacte, sinon on garderait un blanc sur desktop.
-IFRAME_MIN_H = 3300
+# Plancher mesure sur le rendu reel : 593 px sur desktop, 691 px sur mobile
+# (la note de bas de widget y passe sur plus de lignes). Il evite le CLS avant
+# le premier postMessage et garantit que rien n'est tronque si WordPress filtre
+# le script parent. Le script le remet a 0 des qu'il connait la hauteur exacte,
+# sinon le plancher calcule pour mobile laisserait un blanc sur desktop.
+IFRAME_MIN_H = 700
 
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet",
         "août", "septembre", "octobre", "novembre", "décembre"]

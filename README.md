@@ -38,8 +38,8 @@ serait donc quasi vide pour le référencement. `embed-wordpress.html` répond �
 | --- | --- |
 | Contenu crawlable | H2 avec le mot-clé, ~290 mots d'intro, et **35 éléments de liste HTML réelle** : dates clés + premier match des 30 franchises (soit 60 mentions d'équipes indexables) |
 | Pas de duplicate | la page de l'iframe est en `noindex,follow` — le contenu doit être attribué à BasketUSA, pas à github.io |
-| Anti-CLS | `min-height:3300px`, mesuré sur le pire cas réel (mobile, 80 matchs = 3220 px) |
-| Anti double-scroll mobile | `scrolling="no"` + `overflow:hidden`, la liste s'affiche en entier et c'est la page qui défile |
+| Anti-CLS | `min-height:700px`, mesuré sur le rendu réel (593 px desktop, 691 px mobile) |
+| Anti double-scroll | `scrolling="no"` + `overflow:hidden` : **l'iframe** ne défile jamais, son contenu tient pile dedans. Le widget garde en revanche le défilement interne de sa liste, qui est voulu — c'est ce qui le rend compact dans l'article |
 | Auto-hauteur | l'outil émet `postMessage({type:'busa-nba-height'})` au `load`, au `resize` et via `ResizeObserver` |
 | Sécurité | le script parent vérifie `e.origin`, met la référence de l'iframe en cache avec repli, et valide la hauteur (`parseInt`, rejet si `<1`) |
 | Autres attributs | `title` descriptif, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"` |
@@ -55,6 +55,12 @@ le message légitime est bien appliqué.
 
 Le site étant monolingue, les `hreflang` réciproques ne s'appliquent pas ici. Un
 JSON-LD `ItemList` des dates clés reste possible si vous le souhaitez.
+
+⚠️ Dans la page de l'iframe, la hauteur de la liste est fixée en `rem`
+(`max-height:26rem`) et non en `vh` : à l'intérieur d'une iframe, `vh` se calcule
+sur la hauteur de l'iframe, elle-même pilotée par la hauteur du contenu renvoyée
+en postMessage — la référence serait circulaire. La version hors iframe garde
+`min(60vh,32rem)`, qui est correct dans une page normale.
 
 Le paramètre accepte les 30 tricodes (`ATL`, `BOS`, `LAL`…), en majuscules ou non.
 Un tricode inconnu retombe sur Atlanta.
