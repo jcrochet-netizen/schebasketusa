@@ -19,26 +19,42 @@ https://github.com/jcrochet-netizen/schebasketusa/settings/pages
 
 L'URL `https://jcrochet-netizen.github.io/schebasketusa/` répond après une minute.
 
-### 2. Coller l'iframe dans WordPress
+### 2. Coller le bloc dans WordPress
 
-Dans un bloc « HTML personnalisé » :
+Coller **`embed-wordpress.html`** en entier dans un bloc « HTML personnalisé ».
+Ne pas coller l'iframe seule : voir la section SEO ci-dessous.
 
-```html
-<iframe src="https://jcrochet-netizen.github.io/schebasketusa/"
-        title="Calendrier NBA 2026-27" width="100%" height="700"
-        loading="lazy" style="border:0;display:block;max-width:640px;margin:0 auto">
-</iframe>
-```
+**Ouvrir sur une franchise précise** — utile pour les pages d'équipe : ajouter
+`?team=LAL` à l'URL de l'iframe. Les 30 tricodes fonctionnent, majuscules ou non ;
+un tricode inconnu retombe sur Atlanta.
 
-**Ouvrir sur une franchise précise** — utile pour les pages d'équipe, où le lecteur
-arrive directement sur le calendrier des Lakers :
+## SEO et sécurité de l'intégration
 
-```html
-<iframe src="https://jcrochet-netizen.github.io/schebasketusa/?team=LAL"
-        title="Calendrier NBA 2026-27 des Lakers" width="100%" height="700"
-        loading="lazy" style="border:0;display:block;max-width:640px;margin:0 auto">
-</iframe>
-```
+Le contenu d'une iframe **n'est pas attribué à la page parente** par Google : il
+appartient au domaine source (github.io). Une page qui ne contiendrait que l'iframe
+serait donc quasi vide pour le référencement. `embed-wordpress.html` répond à ça :
+
+| Point | Mise en œuvre |
+| --- | --- |
+| Contenu crawlable | H2 avec le mot-clé, ~290 mots d'intro, et **35 éléments de liste HTML réelle** : dates clés + premier match des 30 franchises (soit 60 mentions d'équipes indexables) |
+| Pas de duplicate | la page de l'iframe est en `noindex,follow` — le contenu doit être attribué à BasketUSA, pas à github.io |
+| Anti-CLS | `min-height:3300px`, mesuré sur le pire cas réel (mobile, 80 matchs = 3220 px) |
+| Anti double-scroll mobile | `scrolling="no"` + `overflow:hidden`, la liste s'affiche en entier et c'est la page qui défile |
+| Auto-hauteur | l'outil émet `postMessage({type:'busa-nba-height'})` au `load`, au `resize` et via `ResizeObserver` |
+| Sécurité | le script parent vérifie `e.origin`, met la référence de l'iframe en cache avec repli, et valide la hauteur (`parseInt`, rejet si `<1`) |
+| Autres attributs | `title` descriptif, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"` |
+
+**Le script parent est une amélioration progressive.** S'il est filtré par WordPress,
+le `min-height` suffit à tout afficher sans rien tronquer. Le script remet
+`min-height` à `0` dès qu'il connaît la hauteur exacte, sinon le plancher calculé
+pour mobile laisserait un blanc sur desktop.
+
+Garde-fous vérifiés en conditions réelles : origine pirate, mauvais type de message,
+hauteur non numérique, nulle, négative, et `data` absent — les six sont ignorés,
+le message légitime est bien appliqué.
+
+Le site étant monolingue, les `hreflang` réciproques ne s'appliquent pas ici. Un
+JSON-LD `ItemList` des dates clés reste possible si vous le souhaitez.
 
 Le paramètre accepte les 30 tricodes (`ATL`, `BOS`, `LAL`…), en majuscules ou non.
 Un tricode inconnu retombe sur Atlanta.

@@ -1,0 +1,102 @@
+<!-- ============================================================
+     Calendrier NBA 2026-2027 — bloc a coller dans un bloc HTML personnalise.
+     Le texte et les listes ci-dessous sont le contenu indexe par Google :
+     ne pas les supprimer, l'iframe seule ne rapporte aucun SEO.
+     ============================================================ -->
+
+<h2>Le calendrier NBA 2026-2027 franchise par franchise, en heure française</h2>
+
+<p>La saison régulière NBA 2026-2027 s’ouvre le mardi 20 octobre 2026 avec
+Detroit Pistons – Boston Celtics, et se termine dans la nuit du lundi 12 avril 2027. Bonne nouvelle pour les
+suiveurs français : ce match d’ouverture est programmé à <strong>21h00</strong>,
+soit en prime time chez nous et non au milieu de la nuit. Chacune des 30 franchises
+dispute 82 matchs, dont 41 à domicile et 41 à l’extérieur. Le calendrier ci-dessous
+permet de sélectionner une équipe et d’afficher l’intégralité de son programme, avec
+pour chaque rencontre l’adversaire, le lieu et l’horaire.</p>
+
+<p><strong>Tous les horaires sont donnés en heure française.</strong> La NBA publie
+son calendrier en heure de la côte Est américaine : un match programmé en soirée aux
+États-Unis se joue donc au milieu de la nuit en France, et il est ici daté au jour
+français, celui où vous le regardez. L’écart varie entre cinq et six heures selon la
+période, les États-Unis et l’Europe ne changeant pas d’heure aux mêmes dates.</p>
+
+<p>Deux rencontres de début décembre restent à programmer : elles dépendent du
+parcours de chaque équipe en Emirates NBA Cup, dont les matchs de poule sont
+signalés dans le calendrier.</p>
+
+<h3>Les dates à retenir de la saison NBA 2026-2027</h3>
+
+<ul>
+    <li><strong>Ouverture de la saison</strong> : mardi 20 octobre 2026 à 21h00, Detroit Pistons – Boston Celtics.</li>
+    <li><strong>NBA Paris Game</strong> : jeudi 14 janvier 2027 à 20h00, San Antonio Spurs – New Orleans Pelicans à l’Accor Arena.</li>
+    <li><strong>NBA Manchester Game</strong> : dimanche 17 janvier 2027 à 16h30, New Orleans Pelicans – San Antonio Spurs à la Co-op Live.</li>
+    <li><strong>NBA Mexico City Game</strong> : samedi 7 novembre 2026, Denver Nuggets à l’Arena CDMX.</li>
+    <li><strong>Fin de la saison régulière</strong> : nuit du lundi 12 avril 2027.</li>
+</ul>
+
+<h3>Calendrier interactif : choisissez votre franchise</h3>
+
+<iframe id="busa-nba-cal"
+        src="https://jcrochet-netizen.github.io/schebasketusa/"
+        title="Calendrier NBA 2026-2027 match par match, franchise par franchise, en heure française"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:640px;
+               min-height:3300px;border:0;overflow:hidden"></iframe>
+
+<script>
+/* Ajuste la hauteur de l'iframe a son contenu (evite le double-scroll mobile).
+   Ameliration progressive : si ce script est filtre par WordPress, l'iframe
+   reste lisible grace au min-height ci-dessus. */
+(function(){
+  var ORIGIN = 'https://jcrochet-netizen.github.io';
+  var frame  = document.getElementById('busa-nba-cal');
+  window.addEventListener('message', function(e){
+    if (e.origin !== ORIGIN) return;                 /* origine de confiance */
+    var d = e.data;
+    if (!d || d.type !== 'busa-nba-height') return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;                         /* hauteur valide */
+    if (!frame) frame = document.getElementById('busa-nba-cal');
+    if (!frame) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';                     /* le plancher a servi */
+  }, false);
+})();
+</script>
+
+<h3>Le premier match de chaque franchise NBA en 2026-2027</h3>
+
+<ul>
+    <li><strong>Atlanta Hawks</strong> — jeudi 22 octobre 2026 à 01h00, à l’extérieur chez les Orlando Magic.</li>
+    <li><strong>Boston Celtics</strong> — mardi 20 octobre 2026 à 21h00, à l’extérieur chez les Detroit Pistons.</li>
+    <li><strong>Brooklyn Nets</strong> — jeudi 22 octobre 2026 à 01h30, à domicile contre les Charlotte Hornets.</li>
+    <li><strong>Charlotte Hornets</strong> — jeudi 22 octobre 2026 à 01h30, à l’extérieur chez les Brooklyn Nets.</li>
+    <li><strong>Chicago Bulls</strong> — jeudi 22 octobre 2026 à 01h30, à l’extérieur chez les Toronto Raptors.</li>
+    <li><strong>Cleveland Cavaliers</strong> — vendredi 23 octobre 2026 à 01h00, à l’extérieur chez les Philadelphia 76ers.</li>
+    <li><strong>Dallas Mavericks</strong> — jeudi 22 octobre 2026 à 02h30, à l’extérieur chez les Houston Rockets.</li>
+    <li><strong>Denver Nuggets</strong> — vendredi 23 octobre 2026 à 03h30, à l’extérieur chez les Oklahoma City Thunder.</li>
+    <li><strong>Detroit Pistons</strong> — mardi 20 octobre 2026 à 21h00, à domicile contre les Boston Celtics.</li>
+    <li><strong>Golden State Warriors</strong> — jeudi 22 octobre 2026 à 04h00, à l’extérieur chez les Los Angeles Lakers.</li>
+    <li><strong>Houston Rockets</strong> — jeudi 22 octobre 2026 à 02h30, à domicile contre les Dallas Mavericks.</li>
+    <li><strong>Indiana Pacers</strong> — jeudi 22 octobre 2026 à 02h00, à l’extérieur chez les New Orleans Pelicans.</li>
+    <li><strong>Los Angeles Clippers</strong> — jeudi 22 octobre 2026 à 04h30, à domicile contre les Sacramento Kings.</li>
+    <li><strong>Los Angeles Lakers</strong> — jeudi 22 octobre 2026 à 04h00, à domicile contre les Golden State Warriors.</li>
+    <li><strong>Memphis Grizzlies</strong> — jeudi 22 octobre 2026 à 02h00, à domicile contre les Utah Jazz.</li>
+    <li><strong>Miami Heat</strong> — jeudi 22 octobre 2026 à 01h30, à domicile contre les Minnesota Timberwolves.</li>
+    <li><strong>Milwaukee Bucks</strong> — jeudi 22 octobre 2026 à 01h00, à l’extérieur chez les Washington Wizards.</li>
+    <li><strong>Minnesota Timberwolves</strong> — jeudi 22 octobre 2026 à 01h30, à l’extérieur chez les Miami Heat.</li>
+    <li><strong>New Orleans Pelicans</strong> — jeudi 22 octobre 2026 à 02h00, à domicile contre les Indiana Pacers.</li>
+    <li><strong>New York Knicks</strong> — mercredi 21 octobre 2026 à 01h00, à domicile contre les Philadelphia 76ers.</li>
+    <li><strong>Oklahoma City Thunder</strong> — mercredi 21 octobre 2026 à 03h30, à l’extérieur chez les San Antonio Spurs.</li>
+    <li><strong>Orlando Magic</strong> — jeudi 22 octobre 2026 à 01h00, à domicile contre les Atlanta Hawks.</li>
+    <li><strong>Philadelphia 76ers</strong> — mercredi 21 octobre 2026 à 01h00, à l’extérieur chez les New York Knicks.</li>
+    <li><strong>Phoenix Suns</strong> — jeudi 22 octobre 2026 à 04h00, à l’extérieur chez les Portland Trail Blazers.</li>
+    <li><strong>Portland Trail Blazers</strong> — jeudi 22 octobre 2026 à 04h00, à domicile contre les Phoenix Suns.</li>
+    <li><strong>Sacramento Kings</strong> — jeudi 22 octobre 2026 à 04h30, à l’extérieur chez les Los Angeles Clippers.</li>
+    <li><strong>San Antonio Spurs</strong> — mercredi 21 octobre 2026 à 03h30, à domicile contre les Oklahoma City Thunder.</li>
+    <li><strong>Toronto Raptors</strong> — jeudi 22 octobre 2026 à 01h30, à domicile contre les Chicago Bulls.</li>
+    <li><strong>Utah Jazz</strong> — jeudi 22 octobre 2026 à 02h00, à l’extérieur chez les Memphis Grizzlies.</li>
+    <li><strong>Washington Wizards</strong> — jeudi 22 octobre 2026 à 01h00, à domicile contre les Milwaukee Bucks.</li>
+</ul>

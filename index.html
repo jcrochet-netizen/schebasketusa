@@ -3,14 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex,follow">
 <title>Calendrier NBA 2026-27 &middot; BasketUSA</title>
-<style>
-html,body{height:100%;margin:0;background:transparent;}
-.busa-nba{height:100%;max-width:none;border:0;border-radius:0;
-  display:flex;flex-direction:column;}
-.busa-nba .bn-list{flex:1 1 auto;max-height:none;}
-</style>
 </head>
 <body>
 <style>
@@ -374,6 +368,28 @@ html,body{height:100%;margin:0;background:transparent;}
     var h=(location.hash||'').replace('#','').toUpperCase();
     if(SCHED[h]) setTeam(h,false);
   });
+})();
+</script>
+<style>
+html,body{margin:0;background:transparent;overflow:hidden;}
+.busa-nba{max-width:none;border:0;border-radius:0;}
+.busa-nba .bn-list{max-height:none;overflow-y:visible;}
+.busa-nba .bn-month{position:static;}
+</style>
+<script>
+(function(){
+  var last=0;
+  function envoyer(){
+    var h=Math.ceil(document.body.getBoundingClientRect().height);
+    if(!h||h===last) return;
+    last=h;
+    parent.postMessage({type:'busa-nba-height',height:h},'*');
+  }
+  window.addEventListener('load',envoyer);
+  window.addEventListener('resize',envoyer);
+  if(window.ResizeObserver) new ResizeObserver(envoyer).observe(document.body);
+  document.addEventListener('DOMContentLoaded',envoyer);
+  envoyer();
 })();
 </script>
 </body>

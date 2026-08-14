@@ -472,20 +472,179 @@ PAGE_PAD = ("<style>body{margin:0;padding:2rem 1rem;background:#fff;}"
             "@media (prefers-color-scheme:dark){body{background:#0b0d10;}}</style>\n")
 TITLE = "<title>Calendrier NBA 2026-27 &middot; BasketUSA</title>\n"
 
-# Page servie dans l'iframe : le widget epouse la hauteur donnee a l'iframe,
-# c'est la liste qui prend la place restante. N'importe quelle hauteur marche.
+# Page servie dans l'iframe. La liste s'affiche en entier (pas de zone de
+# defilement interne) : c'est la page parente qui defile, ce qui evite le
+# double-scroll sur mobile. La hauteur est renvoyee au parent en postMessage.
+# A placer APRES le fragment : le <style> du widget est dans le body, une regle
+# de meme specificite mise dans le <head> se ferait ecraser.
 IFRAME_CSS = """<style>
-html,body{height:100%;margin:0;background:transparent;}
-.busa-nba{height:100%;max-width:none;border:0;border-radius:0;
-  display:flex;flex-direction:column;}
-.busa-nba .bn-list{flex:1 1 auto;max-height:none;}
+html,body{margin:0;background:transparent;overflow:hidden;}
+.busa-nba{max-width:none;border:0;border-radius:0;}
+.busa-nba .bn-list{max-height:none;overflow-y:visible;}
+.busa-nba .bn-month{position:static;}
 </style>
+"""
+
+IFRAME_JS = """<script>
+(function(){
+  var last=0;
+  function envoyer(){
+    var h=Math.ceil(document.body.getBoundingClientRect().height);
+    if(!h||h===last) return;
+    last=h;
+    parent.postMessage({type:'busa-nba-height',height:h},'*');
+  }
+  window.addEventListener('load',envoyer);
+  window.addEventListener('resize',envoyer);
+  if(window.ResizeObserver) new ResizeObserver(envoyer).observe(document.body);
+  document.addEventListener('DOMContentLoaded',envoyer);
+  envoyer();
+})();
+</script>
+"""
+
+
+PAGES_URL = "https://jcrochet-netizen.github.io/schebasketusa/"
+PAGES_ORIGIN = "https://jcrochet-netizen.github.io"
+# Plancher mesure sur le rendu reel (pire cas : mobile, 80 matchs = 3220 px).
+# Il evite le CLS avant le premier postMessage, et surtout garantit que rien
+# n'est tronque si WordPress filtre le script parent. Le script le remet a 0
+# des qu'il connait la hauteur exacte, sinon on garderait un blanc sur desktop.
+IFRAME_MIN_H = 3300
+
+MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet",
+        "août", "septembre", "octobre", "novembre", "décembre"]
+JOURS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+
+
+def fr_date(iso, avec_jour=True):
+    y, m, d = (int(x) for x in iso.split("-"))
+    dt = date(y, m, d)
+    jour = f"{JOURS[dt.weekday()]} " if avec_jour else ""
+    return f"{jour}{'1er' if d == 1 else d} {MOIS[m - 1]} {y}"
+
+
+def build_embed():
+    """Bloc pret a coller : contenu crawlable + iframe durcie.
+
+    Le contenu d'une iframe n'est pas attribue a la page parente par Google.
+    Sans texte et liste HTML reels autour, l'article serait vide pour le SEO.
+    """
+    raw = json.load(open("schedule.json", encoding="utf-8"))
+    nom = {t: TEAMS[t][0] for t in TEAMS}
+
+    # premier match de chaque franchise : 30 lignes, 60 mentions d'equipes
+    ouvertures = []
+    for tri in sorted(TEAMS, key=lambda t: TEAMS[t][0]):
+        g = raw[tri]["games"][0]
+        adv = nom[OPP_TO_TRI[g["opp"]]]
+        lieu = f"à l’extérieur chez les {adv}" if g["away"] else f"à domicile contre les {adv}"
+        ouvertures.append(
+            f"    <li><strong>{nom[tri]}</strong> — {fr_date(g['date'])} "
+            f"à {g['time'].replace(':', 'h')}, {lieu}.</li>")
+
+    # dates a retenir, derivees des donnees
+    tous = sorted({(g["date"], g["time"]) for t in raw.values() for g in t["games"]})
+    premier, dernier = tous[0][0], tous[-1][0]
+    h_premier = tous[0][1].replace(":", "h")
+    # affiche du match d'ouverture (le PDF donne un 3:00 PM ET sur NBC,
+    # soit 21h00 en France : c'est un match en prime time, pas un match de nuit)
+    ouv = [(tri, g) for tri, t in raw.items() for g in t["games"]
+           if g["date"] == premier and not g["away"]][0]
+    affiche = f"{nom[ouv[0]]} – {nom[OPP_TO_TRI[ouv[1]['opp']]]}"
+    paris = next(g for g in raw["SAS"]["games"] if g.get("venue", "").endswith("PARIS"))
+    manch = next(g for g in raw["SAS"]["games"] if "MANCHESTER" in g.get("venue", ""))
+    mex = next(g for g in raw["DEN"]["games"] if "MEXICO" in g.get("venue", ""))
+
+    cles = [
+        f"    <li><strong>Ouverture de la saison</strong> : {fr_date(premier)} à "
+        f"{h_premier}, {affiche}.</li>",
+        f"    <li><strong>NBA Paris Game</strong> : {fr_date(paris['date'])} à "
+        f"{paris['time'].replace(':', 'h')}, {nom['SAS']} – {nom['NOP']} à l’Accor Arena.</li>",
+        f"    <li><strong>NBA Manchester Game</strong> : {fr_date(manch['date'])} à "
+        f"{manch['time'].replace(':', 'h')}, {nom['NOP']} – {nom['SAS']} à la Co-op Live.</li>",
+        f"    <li><strong>NBA Mexico City Game</strong> : {fr_date(mex['date'])}, "
+        f"{nom['DEN']} à l’Arena CDMX.</li>",
+        f"    <li><strong>Fin de la saison régulière</strong> : nuit du "
+        f"{fr_date(dernier)}.</li>",
+    ]
+
+    return f"""<!-- ============================================================
+     Calendrier NBA 2026-2027 — bloc a coller dans un bloc HTML personnalise.
+     Le texte et les listes ci-dessous sont le contenu indexe par Google :
+     ne pas les supprimer, l'iframe seule ne rapporte aucun SEO.
+     ============================================================ -->
+
+<h2>Le calendrier NBA 2026-2027 franchise par franchise, en heure française</h2>
+
+<p>La saison régulière NBA 2026-2027 s’ouvre le {fr_date(premier)} avec
+{affiche}, et se termine dans la nuit du {fr_date(dernier)}. Bonne nouvelle pour les
+suiveurs français : ce match d’ouverture est programmé à <strong>{h_premier}</strong>,
+soit en prime time chez nous et non au milieu de la nuit. Chacune des 30 franchises
+dispute 82 matchs, dont 41 à domicile et 41 à l’extérieur. Le calendrier ci-dessous
+permet de sélectionner une équipe et d’afficher l’intégralité de son programme, avec
+pour chaque rencontre l’adversaire, le lieu et l’horaire.</p>
+
+<p><strong>Tous les horaires sont donnés en heure française.</strong> La NBA publie
+son calendrier en heure de la côte Est américaine : un match programmé en soirée aux
+États-Unis se joue donc au milieu de la nuit en France, et il est ici daté au jour
+français, celui où vous le regardez. L’écart varie entre cinq et six heures selon la
+période, les États-Unis et l’Europe ne changeant pas d’heure aux mêmes dates.</p>
+
+<p>Deux rencontres de début décembre restent à programmer : elles dépendent du
+parcours de chaque équipe en Emirates NBA Cup, dont les matchs de poule sont
+signalés dans le calendrier.</p>
+
+<h3>Les dates à retenir de la saison NBA 2026-2027</h3>
+
+<ul>
+{chr(10).join(cles)}
+</ul>
+
+<h3>Calendrier interactif : choisissez votre franchise</h3>
+
+<iframe id="busa-nba-cal"
+        src="{PAGES_URL}"
+        title="Calendrier NBA 2026-2027 match par match, franchise par franchise, en heure française"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:640px;
+               min-height:{IFRAME_MIN_H}px;border:0;overflow:hidden"></iframe>
+
+<script>
+/* Ajuste la hauteur de l'iframe a son contenu (evite le double-scroll mobile).
+   Ameliration progressive : si ce script est filtre par WordPress, l'iframe
+   reste lisible grace au min-height ci-dessus. */
+(function(){{
+  var ORIGIN = '{PAGES_ORIGIN}';
+  var frame  = document.getElementById('busa-nba-cal');
+  window.addEventListener('message', function(e){{
+    if (e.origin !== ORIGIN) return;                 /* origine de confiance */
+    var d = e.data;
+    if (!d || d.type !== 'busa-nba-height') return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;                         /* hauteur valide */
+    if (!frame) frame = document.getElementById('busa-nba-cal');
+    if (!frame) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';                     /* le plancher a servi */
+  }}, false);
+}})();
+</script>
+
+<h3>Le premier match de chaque franchise NBA en 2026-2027</h3>
+
+<ul>
+{chr(10).join(ouvertures)}
+</ul>
 """
 
 
 def main():
     linked = make_fragment(inline=False)    # logos servis en fichiers
     inline = make_fragment(inline=True)     # logos embarques en data-URI
+    Path("embed-wordpress.html").write_text(build_embed(), encoding="utf-8")
 
     Path("widget-wordpress.html").write_text(linked, encoding="utf-8")
     Path("widget-wordpress-inline.html").write_text(inline, encoding="utf-8")
@@ -501,13 +660,16 @@ def main():
         + TITLE + PAGE_PAD + "</head>\n<body>\n" + linked + "</body>\n</html>\n",
         encoding="utf-8")
 
-    # cible de l'iframe, publiee sur GitHub Pages
+    # cible de l'iframe, publiee sur GitHub Pages.
+    # noindex : le contenu doit etre attribue a l'article BasketUSA, pas a
+    # github.io — sans quoi on cree une page concurrente en duplicate.
     Path("index.html").write_text(
         "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n"
         "<meta charset=\"utf-8\">\n"
         "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
-        "<meta name=\"robots\" content=\"noindex\">\n"
-        + TITLE + IFRAME_CSS + "</head>\n<body>\n" + linked + "</body>\n</html>\n",
+        "<meta name=\"robots\" content=\"noindex,follow\">\n"
+        + TITLE + "</head>\n<body>\n" + linked + IFRAME_CSS + IFRAME_JS
+        + "</body>\n</html>\n",
         encoding="utf-8")
 
     logos = len([t for t in TEAMS if logo_src(t, False)])
