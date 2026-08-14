@@ -10,27 +10,21 @@ sans `<script>` ni `<style>`** : il n'y a plus rien que `wpautop` puisse casser,
 le filtrage de contenu puisse vider. Le code s'exécute sur GitHub Pages, WordPress ne
 fait que l'afficher.
 
-### 1. Créer le dépôt et pousser
+Dépôt : https://github.com/jcrochet-netizen/schebasketusa
 
-Le dépôt est déjà initialisé et committé en local. Créer un dépôt **public** sur
-github.com (GitHub Pages n'est gratuit sur dépôt privé qu'avec un compte payant), puis :
+### 1. Activer GitHub Pages
 
-```bash
-git remote add origin https://github.com/VOTRE-COMPTE/calendrier-nba.git
-git push -u origin main
-```
+https://github.com/jcrochet-netizen/schebasketusa/settings/pages
+→ **Source : `Deploy from a branch` → branche `main` → dossier `/ (root)` → Save**
 
-### 2. Activer GitHub Pages
+L'URL `https://jcrochet-netizen.github.io/schebasketusa/` répond après une minute.
 
-Dans le dépôt : **Settings → Pages → Source : `Deploy from a branch` → `main` / `/root`**.
-L'URL `https://VOTRE-COMPTE.github.io/calendrier-nba/` est active après une minute.
-
-### 3. Coller l'iframe dans WordPress
+### 2. Coller l'iframe dans WordPress
 
 Dans un bloc « HTML personnalisé » :
 
 ```html
-<iframe src="https://VOTRE-COMPTE.github.io/calendrier-nba/"
+<iframe src="https://jcrochet-netizen.github.io/schebasketusa/"
         title="Calendrier NBA 2026-27" width="100%" height="700"
         loading="lazy" style="border:0;display:block;max-width:640px;margin:0 auto">
 </iframe>
@@ -40,7 +34,10 @@ Dans un bloc « HTML personnalisé » :
 arrive directement sur le calendrier des Lakers :
 
 ```html
-<iframe src="https://VOTRE-COMPTE.github.io/calendrier-nba/?team=LAL" ...></iframe>
+<iframe src="https://jcrochet-netizen.github.io/schebasketusa/?team=LAL"
+        title="Calendrier NBA 2026-27 des Lakers" width="100%" height="700"
+        loading="lazy" style="border:0;display:block;max-width:640px;margin:0 auto">
+</iframe>
 ```
 
 Le paramètre accepte les 30 tricodes (`ATL`, `BOS`, `LAL`…), en majuscules ou non.
