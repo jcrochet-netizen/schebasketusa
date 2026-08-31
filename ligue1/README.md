@@ -40,15 +40,36 @@ projet — un script serveur + une GitHub Action en cron.
 
 ## Logos
 
-Aucun logo pour l'instant : chaque club affiche un **monogramme** à ses couleurs.
-Pour les ajouter, déposer `logos/<CODE>.svg` (ou `.png`) et relancer le build.
-Le widget reprend automatiquement les deux traitements de la version NBA : pastille
-claire en mode sombre, pastille foncée pour un logo servi entièrement en blanc.
+Les 18 logos viennent du **CDN de la LFP** (`fetch_logos.py`) :
+
+```
+https://ligue1.com/images/clubs/monochrome/L1/<Nom>.webp
+```
+
+WebP 224×224, 140 Ko au total, ~5 Ko par club — et un seul se charge à la fois.
+
+⚠️ **La LFP ne publie que des logos monochromes blancs**, prévus pour un fond sombre.
+Vérifié à l'analyse des pixels : 100 % des pixels visibles sont blancs. Ils sont donc
+posés sur une **pastille foncée dans les deux thèmes**, avec un liseré discret pour
+qu'elle se détache aussi sur fond sombre. Sans ça, les 18 logos seraient invisibles
+en mode clair.
+
+Aucune variante couleur n'existe sur ce CDN. Testé et renvoyant 404 : `L1/`, `color/`,
+`couleur/`, `colour/`, `full/`, `official/`, `logos/`, `rvb/`, en `.png` et `.svg`.
+Pas d'API publique non plus sur `lfp.fr` ni `ligue1.com`. Le site officiel lui-même
+n'affiche que le monochrome, y compris sur sa page classement.
+
+Pour des logos **en couleur**, la source est SportMonks (`/teams/seasons/28082`,
+champ `image_path`) : une seule requête pour les 18 clubs.
+
+La règle de pastille reste **déduite de l'image** et non codée en dur, pour rester
+valable si la source change : couleurs déclarées pour un SVG, luminance moyenne des
+pixels non transparents pour un PNG ou un WebP.
 
 ## Régénérer
 
 ```bash
-python3 parse_schedule.py && python3 build_widget.py
+python3 fetch_logos.py && python3 parse_schedule.py && python3 build_widget.py
 ```
 
 - `parse_schedule.py` — lit le PDF, produit `schedule.json`

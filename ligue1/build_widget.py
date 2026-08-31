@@ -34,24 +34,45 @@ def _lum(h):
 
 
 def logo_chip_sombre(code):
-    """Un logo servi uniquement en blanc exige une pastille foncee."""
-    p = Path("logos") / f"{code}.svg"
-    if not p.exists():
-        return 0
-    cols = set(re.findall(r"#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3}\b",
-                          p.read_text(encoding="utf-8")))
-    return 1 if cols and min(_lum(c) for c in cols) > 0.6 else 0
+    """Un logo trop clair exige une pastille foncee, sinon il est invisible.
+
+    Les logos de la LFP sont tous des silhouettes blanches : la regle reste
+    deduite de l'image et non codee en dur, pour rester valable si la source
+    change un jour. SVG -> couleurs declarees ; matriciel -> pixels reels.
+    """
+    svg = Path("logos") / f"{code}.svg"
+    if svg.exists():
+        cols = set(re.findall(r"#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3}\b",
+                              svg.read_text(encoding="utf-8")))
+        return 1 if cols and min(_lum(c) for c in cols) > 0.6 else 0
+
+    for ext in ("png", "webp"):
+        img = Path("logos") / f"{code}.{ext}"
+        if not img.exists():
+            continue
+        try:
+            from PIL import Image
+        except ImportError:
+            return 1  # logos LFP : blancs par defaut
+        im = Image.open(img).convert("RGBA")
+        px = [p for p in im.getdata() if p[3] > 40]      # ignore la transparence
+        if not px:
+            return 0
+        moy = sum((p[0] + p[1] + p[2]) / 765 for p in px) / len(px)
+        return 1 if moy > 0.6 else 0
+    return 0
 
 
 def logo_src(code, inline):
     if code in LOGOS_MANQUANTS:
         return ""
-    for ext in ("svg", "png"):
+    for ext in ("svg", "png", "webp"):
         p = Path("logos") / f"{code}.{ext}"
         if p.exists():
             if not inline:
                 return f"{LOGO_BASE}{code}.{ext}"
-            mime = "image/svg+xml" if ext == "svg" else "image/png"
+            mime = {"svg": "image/svg+xml", "png": "image/png",
+                    "webp": "image/webp"}[ext]
             return f"data:{mime};base64," + base64.b64encode(p.read_bytes()).decode()
     return ""
 

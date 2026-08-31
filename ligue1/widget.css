@@ -54,7 +54,12 @@
 .busa-l1 .l1-crest.has-logo{
   background:var(--l1-crest-bg,none); box-shadow:none; padding:var(--l1-crest-pad,0);
 }
-.busa-l1 .l1-crest.has-logo.chip-dark{background:#15181d; padding:.26rem;}
+/* logos LFP : silhouettes blanches, donc pastille foncee dans les deux
+   themes. Le liseré évite qu'elle se confonde avec un fond sombre. */
+.busa-l1 .l1-crest.has-logo.chip-dark{
+  background:#171b21; padding:.3rem;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
+}
 
 .busa-l1 .l1-pick{position:relative; display:block;}
 .busa-l1 .l1-pick::after{
