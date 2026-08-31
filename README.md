@@ -1,12 +1,11 @@
 # Widget calendrier NBA 2026-27 — BasketUSA
 
-> **Ce dépôt héberge deux calendriers :**
-> - **NBA 2026-27** — à la racine, iframe : `https://jcrochet-netizen.github.io/schebasketusa/`
-> - **Ligue 1 2026-27** — dans [`ligue1/`](ligue1/README.md), iframe : `https://jcrochet-netizen.github.io/schebasketusa/ligue1/`
->
-> La NBA reste à la racine pour ne pas casser l'URL déjà en place. Les deux widgets
-> utilisent des préfixes CSS distincts (`.busa-nba` / `.busa-l1`) et peuvent donc
-> cohabiter sur une même page.
+> **Calendrier Ligue 1 :** il vivait dans `ligue1/`, il a son propre dépôt depuis —
+> [jcrochet-netizen/ScheduleFootball](https://github.com/jcrochet-netizen/ScheduleFootball),
+> iframe `https://jcrochet-netizen.github.io/ScheduleFootball/`. Un dépôt nommé
+> `schebasketusa` qui hébergeait du football n'avait pas de sens. Les deux widgets
+> gardent des préfixes CSS distincts (`.busa-nba` / `.busa-l1`) et peuvent donc
+> cohabiter sur une même page WordPress.
 
 Calendrier de la saison régulière, franchise par franchise, extrait du PDF officiel NBA
 (`2026-27-NBA-Regular-Season-Schedule-By-Team.pdf`, version du 13/08/2026).

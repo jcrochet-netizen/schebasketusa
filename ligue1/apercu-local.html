@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,follow">
 <title>Calendrier Ligue 1 2026-27 &middot; BasketUSA</title>
+<style>body{margin:0;padding:2rem 1rem;background:#fff;}@media (prefers-color-scheme:dark){body{background:#0b0d10;}}</style>
 </head>
 <body>
 <style>
@@ -338,27 +338,6 @@
     var h=(location.hash||'').replace('#','').toUpperCase();
     if(SCHED[h]) choisir(h,false);
   });
-})();
-</script>
-<style>
-html,body{margin:0;background:transparent;overflow:hidden;}
-.busa-l1{max-width:none;border:0;border-radius:0;}
-.busa-l1 .l1-list{max-height:26rem;}
-</style>
-<script>
-(function(){
-  var last=0;
-  function envoyer(){
-    var h=Math.ceil(document.body.getBoundingClientRect().height);
-    if(!h||h===last) return;
-    last=h;
-    parent.postMessage({type:'busa-l1-height',height:h},'*');
-  }
-  window.addEventListener('load',envoyer);
-  window.addEventListener('resize',envoyer);
-  if(window.ResizeObserver) new ResizeObserver(envoyer).observe(document.body);
-  document.addEventListener('DOMContentLoaded',envoyer);
-  envoyer();
 })();
 </script>
 </body>
