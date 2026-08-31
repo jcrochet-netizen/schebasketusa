@@ -1,5 +1,13 @@
 # Widget calendrier NBA 2026-27 — BasketUSA
 
+> **Ce dépôt héberge deux calendriers :**
+> - **NBA 2026-27** — à la racine, iframe : `https://jcrochet-netizen.github.io/schebasketusa/`
+> - **Ligue 1 2026-27** — dans [`ligue1/`](ligue1/README.md), iframe : `https://jcrochet-netizen.github.io/schebasketusa/ligue1/`
+>
+> La NBA reste à la racine pour ne pas casser l'URL déjà en place. Les deux widgets
+> utilisent des préfixes CSS distincts (`.busa-nba` / `.busa-l1`) et peuvent donc
+> cohabiter sur une même page.
+
 Calendrier de la saison régulière, franchise par franchise, extrait du PDF officiel NBA
 (`2026-27-NBA-Regular-Season-Schedule-By-Team.pdf`, version du 13/08/2026).
 
@@ -61,12 +69,6 @@ JSON-LD `ItemList` des dates clés reste possible si vous le souhaitez.
 sur la hauteur de l'iframe, elle-même pilotée par la hauteur du contenu renvoyée
 en postMessage — la référence serait circulaire. La version hors iframe garde
 `min(60vh,32rem)`, qui est correct dans une page normale.
-
-Le paramètre accepte les 30 tricodes (`ATL`, `BOS`, `LAL`…), en majuscules ou non.
-Un tricode inconnu retombe sur Atlanta.
-
-La page de l'iframe **épouse la hauteur qu'on lui donne** : c'est la liste des matchs
-qui prend la place restante. Changer `height="700"` suffit, rien à recalculer.
 
 ### Mettre à jour plus tard
 

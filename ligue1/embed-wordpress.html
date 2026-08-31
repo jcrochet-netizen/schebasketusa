@@ -1,0 +1,87 @@
+<!-- ============================================================
+     Calendrier Ligue 1 2026-2027 — bloc a coller dans un bloc HTML personnalise.
+     Le texte et les listes ci-dessous sont le contenu indexe par Google :
+     ne pas les supprimer, l'iframe seule ne rapporte aucun SEO.
+     ============================================================ -->
+
+<h2>Le calendrier de Ligue 1 2026-2027 club par club</h2>
+
+<p>La saison 2026-2027 de Ligue 1 s’ouvre le samedi 22 août 2026 et s’achève le
+samedi 29 mai 2027. Les 18 clubs disputent 34 journées, soit 34 matchs chacun&nbsp;:
+17 à domicile et 17 à l’extérieur, chaque équipe affrontant toutes les autres deux
+fois. Le calendrier ci-dessous permet de sélectionner un club et d’afficher
+l’intégralité de son programme, journée par journée.</p>
+
+<p><strong>Les dates indiquées sont celles des journées, telles que publiées par la
+LFP.</strong> Les jours et horaires précis de chaque rencontre sont fixés
+ultérieurement selon la programmation télévisée&nbsp;: une journée de Ligue 1 se
+dispute généralement du vendredi au dimanche, et certaines rencontres peuvent être
+décalées en cas de coupe d’Europe.</p>
+
+<h3>La première journée de Ligue 1 2026-2027</h3>
+
+<ul>
+    <li><strong>Angers SCO – LOSC Lille</strong></li>
+    <li><strong>Le Havre AC – AS Monaco</strong></li>
+    <li><strong>Le Mans FC – Stade Brestois 29</strong></li>
+    <li><strong>RC Lens – AJ Auxerre</strong></li>
+    <li><strong>Olympique de Marseille – RC Strasbourg Alsace</strong></li>
+    <li><strong>OGC Nice – FC Lorient</strong></li>
+    <li><strong>Paris Saint-Germain – Stade Rennais FC</strong></li>
+    <li><strong>Toulouse FC – Olympique Lyonnais</strong></li>
+    <li><strong>ESTAC Troyes – Paris FC</strong></li>
+</ul>
+
+<h3>Calendrier interactif : choisissez votre club</h3>
+
+<iframe id="busa-l1-cal"
+        src="https://jcrochet-netizen.github.io/schebasketusa/ligue1/"
+        title="Calendrier de Ligue 1 2026-2027, match par match, club par club"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:640px;
+               min-height:700px;border:0;overflow:hidden"></iframe>
+
+<script>
+/* Ajuste la hauteur de l'iframe a son contenu. Amelioration progressive : si ce
+   script est filtre par WordPress, l'iframe reste lisible grace au min-height. */
+(function(){
+  var ORIGIN = 'https://jcrochet-netizen.github.io';
+  var frame  = document.getElementById('busa-l1-cal');
+  window.addEventListener('message', function(e){
+    if (e.origin !== ORIGIN) return;
+    var d = e.data;
+    if (!d || d.type !== 'busa-l1-height') return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;
+    if (!frame) frame = document.getElementById('busa-l1-cal');
+    if (!frame) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';
+  }, false);
+})();
+</script>
+
+<h3>L’entrée en lice de chaque club de Ligue 1</h3>
+
+<ul>
+    <li><strong>AJ Auxerre</strong> — se déplace à RC Lens.</li>
+    <li><strong>AS Monaco</strong> — se déplace à Le Havre AC.</li>
+    <li><strong>Angers SCO</strong> — reçoit LOSC Lille.</li>
+    <li><strong>ESTAC Troyes</strong> — reçoit Paris FC.</li>
+    <li><strong>FC Lorient</strong> — se déplace à OGC Nice.</li>
+    <li><strong>LOSC Lille</strong> — se déplace à Angers SCO.</li>
+    <li><strong>Le Havre AC</strong> — reçoit AS Monaco.</li>
+    <li><strong>Le Mans FC</strong> — reçoit Stade Brestois 29.</li>
+    <li><strong>OGC Nice</strong> — reçoit FC Lorient.</li>
+    <li><strong>Olympique Lyonnais</strong> — se déplace à Toulouse FC.</li>
+    <li><strong>Olympique de Marseille</strong> — reçoit RC Strasbourg Alsace.</li>
+    <li><strong>Paris FC</strong> — se déplace à ESTAC Troyes.</li>
+    <li><strong>Paris Saint-Germain</strong> — reçoit Stade Rennais FC.</li>
+    <li><strong>RC Lens</strong> — reçoit AJ Auxerre.</li>
+    <li><strong>RC Strasbourg Alsace</strong> — se déplace à Olympique de Marseille.</li>
+    <li><strong>Stade Brestois 29</strong> — se déplace à Le Mans FC.</li>
+    <li><strong>Stade Rennais FC</strong> — se déplace à Paris Saint-Germain.</li>
+    <li><strong>Toulouse FC</strong> — reçoit Olympique Lyonnais.</li>
+</ul>
